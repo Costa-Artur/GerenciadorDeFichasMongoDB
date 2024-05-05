@@ -12,13 +12,33 @@ datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
-
 model User {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  email String @unique
-  username String @unique
-  password String
-  name String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id                String      @id @default(auto()) @map("_id") @db.ObjectId
+  email             String      @unique
+  username          String      @unique
+  password          String
+  name              String?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  campaignsAsGm Campaign[] @relation("GM")
+  campaignAsGmIds String[] @db.ObjectId
+  campaignsAsPlayer Campaign[] @relation("Player", fields: [campaignAsPlayerIds], references: [id])
+  campaignAsPlayerIds String[] @db.ObjectId
+
+  @@map("users")
 }
+
+model Campaign {
+  id           String     @id @default(auto()) @map("_id") @db.ObjectId
+  title         String
+  description   String
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  gm User @relation("GM", fields: [gmId], references: [id])
+  gmId String @db.ObjectId
+  players User[] @relation("Player", fields: [playerIds], references: [id])
+  playerIds String[] @db.ObjectId
+
+  @@map("campaigns")
+}
+
