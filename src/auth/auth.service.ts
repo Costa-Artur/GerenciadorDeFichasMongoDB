@@ -30,7 +30,7 @@ export class AuthService {
         const user = await this.prisma.user.findUnique({where: {username: username}});
 
         if(!user) {
-            throw new NotFoundException('No user found for this email');
+            throw new NotFoundException('No user found for this username');
         }
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
